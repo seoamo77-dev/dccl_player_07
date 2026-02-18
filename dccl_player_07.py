@@ -13,8 +13,8 @@ refresh_timers = {1: None, 2: None, 3: None, 4: None, 5: None}
 
 # 서버 및 경로 설정
 AUTH = ('id', 'pw')
-STAT_URL = "http://server_add/stat"
-base_url = "rtmp://server_add/stream/"
+STAT_URL = "http://server_address/stat"
+base_url = "rtmp://server_address/stream/"
 
 width, height = 800, 450
 gap = 20
@@ -79,8 +79,9 @@ def start_stream(ch, name, is_auto_refresh=False):
 
     if ch == 5: # 마이크 (ffmpeg)
         command = [
-            "ffmpeg", "-f", "dshow", "-i", "audio=usb마이크(USB Audio Device)",
-            "-ac", "1", "-ar", "44100", "-fflags", "nobuffer", "-flags", "low_delay",
+            "ffmpeg", "-f", "dshow", "-rtbufsize", "100M", "-i", "audio=usb마이크(USB Audio Device)",
+            "-acodec", "aac", "-b:a", "128k",
+            "-ac", "1", "-ar", "44100", "-fflags", "nobuffer", "-flush_packets", "1", "-flags", "low_delay",
             "-f", "flv", base_url + name
         ]
     else: # 카메라 (ffplay) - 사용자 CMD 옵션 100% 반영
